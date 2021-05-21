@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line import/no-unresolved
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import {
-  Card, CardTitle, Input, FormGroup, ButtonToggle,
-} from 'reactstrap';
-import { getPayMethods, getValueInvoise } from './Api/PayMethod';
-import { ResultPaymethods, PayMethod, Amount } from './interfaces';
+
+import { Route } from 'react-router-dom';
+import { getValueInvoise, getPayMethods } from './Api/PayMethod';
+import { Amount, ResultPaymethods, PayMethod } from './interfaces';
+import { SuccessPage } from './Components/SuccessPage/SuccessPage';
+import { ConfirmationPage } from './Components/СonfirmationPage/ConfirmationPage';
+import { ExchangeForm } from './Components/ExchangeForm/ExchangeForm';
 
 const App: React.FC = () => {
-  const [invoisePayMethod, setInvosePayMethod] = useState<PayMethod[]>([]);
-  const [withdrawPayMethod, setWithdrawPayMethod] = useState<PayMethod[]>([]);
-  const [invoicePayMethodId, setInvoicePayMethodId] = useState(0);
+  const [invoicePayMethodId, setInvoicePayMethodId] = useState<number>(0);
   const [withdrawPayMethodId, setWithdrawPayMethodId] = useState(0);
   const [withdrawValue, setWithdrawValue] = useState('');
   const [invoiseValue, setInvoiseValue] = useState('');
+  const [payMethod, setPaymethod] = useState<string>('');
+  const [invoisePayMethod, setInvosePayMethod] = useState<PayMethod[]>([]);
+  const [withdrawPayMethod, setWithdrawPayMethod] = useState<PayMethod[]>([]);
+  const [isVisibleCoferm, setIsVisibleCoferm] = useState(false);
 
   useEffect(() => {
     getPayMethods().then((result: ResultPaymethods) => {
@@ -21,14 +26,17 @@ const App: React.FC = () => {
     });
   }, []);
 
-  const handleChangeValue = (event: any) => {
+  const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
-    if (name === 'invoise') {
+    if (name === 'invoice') {
       setInvoiseValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'invoice', withdrawPayMethodId, value)
-          .then((result: Amount) => setWithdrawValue(String(result.amount)));
+        getValueInvoise(invoicePayMethodId, 'invoice', withdrawPayMethodId, +value)
+          .then((result: Amount) => {
+            setWithdrawValue(String(result.amount));
+            setPaymethod('invoise');
+          });
       } else {
         setWithdrawValue('');
       }
@@ -38,87 +46,52 @@ const App: React.FC = () => {
     if (name === 'withdraw') {
       setWithdrawValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'withdraw', withdrawPayMethodId, value)
-          .then((result: Amount) => setInvoiseValue(String(result.amount)));
+        getValueInvoise(invoicePayMethodId, 'withdraw', withdrawPayMethodId, +value)
+          .then((result: Amount) => {
+            setInvoiseValue(String(result.amount));
+            setPaymethod('withdraw');
+          });
       } else {
         setInvoiseValue('');
       }
     }
   };
 
+  // const exchange = (event: React.FormEvent<HTMLFormElement>): void => {
+  //   event.preventDefault();
+  //   setIsVisibleCoferm(true);
+  // };
+  console.log(isVisibleCoferm);
+
   return (
     <div className="app">
-      <div className="container">
-        <div className="card-container">
-          <div className="card">
-            <Card body>
-              <CardTitle tag="h1" className="card__heading">Sell</CardTitle>
-              <FormGroup className="form-groop">
-                <Input
-                  type="select"
-                  name="select"
-                  className="card__select"
-                  onChange={(event) => setInvoicePayMethodId(+event.target.value)}
-                >
-                  <option value="0">All currency</option>
-                  {invoisePayMethod.map((method) => (
-                    <option
-                      value={method.id}
-                      key={method.id}
-                    >
-                      {method.name}
-                    </option>
-                  ))}
-                </Input>
-                <Input
-                  type="number"
-                  name="invoise"
-                  value={invoiseValue}
-                  placeholder="write your numbers"
-                  className="card__input"
-                  onChange={(event) => handleChangeValue(event)}
-                />
-              </FormGroup>
-            </Card>
-          </div>
-          <div className="card">
-            <Card body>
-              <CardTitle tag="h1" className="card__heading">Buy</CardTitle>
-              <FormGroup className="form-groop">
-                <Input
-                  type="select"
-                  name="select"
-                  className="card__select"
-                  onChange={(event) => setWithdrawPayMethodId(+event.target.value)}
-                >
-                  <option value="0">All currency</option>
-                  {withdrawPayMethod.map((method) => (
-                    <option
-                      value={method.id}
-                      key={method.id}
-                    >
-                      {method.name}
-                    </option>
-                  ))}
-                </Input>
-                <Input
-                  type="number"
-                  name="withdraw"
-                  value={withdrawValue}
-                  placeholder="write your numbers"
-                  className="card__input"
-                  onChange={(event) => handleChangeValue(event)}
-                />
-              </FormGroup>
-            </Card>
-          </div>
-        </div>
-        <div className="button-container">
-          <ButtonToggle className="button">
-            Exchange
-          </ButtonToggle>
-        </div>
-      </div>
+      {!isVisibleCoferm && (
+        <ExchangeForm
+          invoisePayMethod={invoisePayMethod}
+          withdrawPayMethod={withdrawPayMethod}
+          // onExchange={exchange}
+          setIsVisibleCoferm={setIsVisibleCoferm}
+          setInvoicePayMethodId={setInvoicePayMethodId}
+          handleChangeValue={handleChangeValue}
+          setWithdrawPayMethodId={setWithdrawPayMethodId}
+          withdrawValue={withdrawValue}
+          invoiseValue={invoiseValue}
+        />
+      )}
+      {isVisibleCoferm && (
+        <ConfirmationPage
+          withdrawValue={withdrawValue}
+          payMethod={payMethod}
+          invoiseValue={invoiseValue}
+          invoisePayMethod={invoisePayMethod}
+          withdrawPayMethod={withdrawPayMethod}
+          invoicePayMethodId={invoicePayMethodId}
+          withdrawPayMethodId={withdrawPayMethodId}
+        />
+      )}
+      <Route path="/success">
+        <SuccessPage />
+      </Route>
     </div>
   );
 };

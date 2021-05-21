@@ -21,7 +21,7 @@ export interface Amount{
 
 export interface PostBody {
   amount: number;
-  base: 'invoice' | 'withdraw';
+  base: string;
   invoicePayMethod: number;
   withdrawPayMethod: number;
 }
