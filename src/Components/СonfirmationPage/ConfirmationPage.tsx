@@ -1,7 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
 import React from 'react';
-import './ConfirmationPage.css';
-import { PayMethod } from '../../interfaces';
+import './ConfirmationPage.scss';
+import { PayMethod, ConfirmatoryAnswer } from '../../interfaces';
+import { getSuccess } from '../../Api/PayMethod';
 
 interface Props {
   payMethod: string,
@@ -11,6 +12,7 @@ interface Props {
   withdrawPayMethod: PayMethod[],
   invoicePayMethodId: number,
   withdrawPayMethodId: number,
+  setPage: any,
 }
 
 export const ConfirmationPage: React.FC<Props> = ({
@@ -20,12 +22,33 @@ export const ConfirmationPage: React.FC<Props> = ({
   withdrawPayMethod,
   invoicePayMethodId,
   withdrawPayMethodId,
+  setPage,
+  payMethod,
 
 }) => {
   const invoicePayMethodName = invoisePayMethod
     .find((method) => method.id === invoicePayMethodId);
   const withdrawPayMethodName = withdrawPayMethod
     .find((method) => method.id === withdrawPayMethodId);
+
+  const confirmation = () => {
+    if (payMethod === 'invoice') {
+      getSuccess(invoiseValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
+        .then((result: ConfirmatoryAnswer) => {
+          if (result.message === 'Success') {
+            setPage('success');
+          }
+        });
+    }
+    if (payMethod === 'withdraw') {
+      getSuccess(withdrawValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
+        .then((result: ConfirmatoryAnswer) => {
+          if (result.message === 'Success') {
+            setPage('success');
+          }
+        });
+    }
+  };
 
   return (
     <div className="card-confirmation">
@@ -54,12 +77,14 @@ export const ConfirmationPage: React.FC<Props> = ({
         <button
           type="button"
           className="card-confirmation__button-cancel"
+          onClick={() => setPage('form')}
         >
           Cancel
         </button>
         <button
-          type="submit"
+          type="button"
           className="card-confirmation__button-confirme"
+          onClick={() => confirmation()}
         >
           Confirme
         </button>

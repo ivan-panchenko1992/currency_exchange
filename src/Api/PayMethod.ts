@@ -5,20 +5,20 @@ const calculate = '/payMethods/calculate?base=';
 export const getPayMethods = () => request(`${BASE_URL}/payMethods`);
 
 export const getValueInvoise = (
-  idInvoice: number, base:string, idWithdraw: number, amount: number,
+  idInvoice: number, base:string, idWithdraw: number, amount: string,
 ) => (
   request(`${BASE_URL}${calculate}${base}&amount=${amount}&invoicePayMethod=${idInvoice}&withdrawPayMethod=${idWithdraw}`)
 );
 
 export const getSuccess = (
-  amount: number, base: string, sellPayMethod: number, buyPayMethod: number,
+  amount: string, base: string, sellPayMethod: number, buyPayMethod: number,
 ) => {
-  const prepearedObject = {
+  const prepearedQuerry = {
     amount,
     base,
     invoicePayMethod: sellPayMethod,
     withdrawPayMethod: buyPayMethod,
   };
 
-  return postRequest(BASE_URL, prepearedObject);
+  return postRequest(BASE_URL, prepearedQuerry);
 };

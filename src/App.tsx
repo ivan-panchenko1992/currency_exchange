@@ -1,8 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect } from 'react';
-import './App.css';
-
-import { Route } from 'react-router-dom';
+import './App.scss';
 import { getValueInvoise, getPayMethods } from './Api/PayMethod';
 import { Amount, ResultPaymethods, PayMethod } from './interfaces';
 import { SuccessPage } from './Components/SuccessPage/SuccessPage';
@@ -11,18 +9,20 @@ import { ExchangeForm } from './Components/ExchangeForm/ExchangeForm';
 
 const App: React.FC = () => {
   const [invoicePayMethodId, setInvoicePayMethodId] = useState<number>(0);
-  const [withdrawPayMethodId, setWithdrawPayMethodId] = useState(0);
+  const [withdrawPayMethodId, setWithdrawPayMethodId] = useState<number>(0);
   const [withdrawValue, setWithdrawValue] = useState('');
   const [invoiseValue, setInvoiseValue] = useState('');
-  const [payMethod, setPaymethod] = useState<string>('');
+  const [payMethod, setPayMethod] = useState<string>('');
   const [invoisePayMethod, setInvosePayMethod] = useState<PayMethod[]>([]);
   const [withdrawPayMethod, setWithdrawPayMethod] = useState<PayMethod[]>([]);
-  const [isVisibleCoferm, setIsVisibleCoferm] = useState(false);
+  const [page, setPage] = useState('form');
 
   useEffect(() => {
     getPayMethods().then((result: ResultPaymethods) => {
       setInvosePayMethod(result.invoice);
+      setInvoicePayMethodId(result.invoice[0].id);
       setWithdrawPayMethod(result.withdraw);
+      setWithdrawPayMethodId(result.withdraw[0].id);
     });
   }, []);
 
@@ -32,10 +32,10 @@ const App: React.FC = () => {
     if (name === 'invoice') {
       setInvoiseValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'invoice', withdrawPayMethodId, +value)
+        getValueInvoise(invoicePayMethodId, 'invoice', withdrawPayMethodId, value)
           .then((result: Amount) => {
             setWithdrawValue(String(result.amount));
-            setPaymethod('invoise');
+            setPayMethod('invoice');
           });
       } else {
         setWithdrawValue('');
@@ -46,10 +46,10 @@ const App: React.FC = () => {
     if (name === 'withdraw') {
       setWithdrawValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'withdraw', withdrawPayMethodId, +value)
+        getValueInvoise(invoicePayMethodId, 'withdraw', withdrawPayMethodId, value)
           .then((result: Amount) => {
             setInvoiseValue(String(result.amount));
-            setPaymethod('withdraw');
+            setPayMethod('withdraw');
           });
       } else {
         setInvoiseValue('');
@@ -57,20 +57,13 @@ const App: React.FC = () => {
     }
   };
 
-  // const exchange = (event: React.FormEvent<HTMLFormElement>): void => {
-  //   event.preventDefault();
-  //   setIsVisibleCoferm(true);
-  // };
-  console.log(isVisibleCoferm);
-
   return (
     <div className="app">
-      {!isVisibleCoferm && (
+      {page === 'form' && (
         <ExchangeForm
           invoisePayMethod={invoisePayMethod}
           withdrawPayMethod={withdrawPayMethod}
-          // onExchange={exchange}
-          setIsVisibleCoferm={setIsVisibleCoferm}
+          setPage={setPage}
           setInvoicePayMethodId={setInvoicePayMethodId}
           handleChangeValue={handleChangeValue}
           setWithdrawPayMethodId={setWithdrawPayMethodId}
@@ -78,7 +71,7 @@ const App: React.FC = () => {
           invoiseValue={invoiseValue}
         />
       )}
-      {isVisibleCoferm && (
+      {page === 'conferm' && (
         <ConfirmationPage
           withdrawValue={withdrawValue}
           payMethod={payMethod}
@@ -87,11 +80,12 @@ const App: React.FC = () => {
           withdrawPayMethod={withdrawPayMethod}
           invoicePayMethodId={invoicePayMethodId}
           withdrawPayMethodId={withdrawPayMethodId}
+          setPage={setPage}
         />
       )}
-      <Route path="/success">
+      {page === 'success' && (
         <SuccessPage />
-      </Route>
+      )}
     </div>
   );
 };

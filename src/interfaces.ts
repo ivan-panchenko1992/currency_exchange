@@ -20,11 +20,11 @@ export interface Amount{
 }
 
 export interface PostBody {
-  amount: number;
+  amount: string;
   base: string;
   invoicePayMethod: number;
   withdrawPayMethod: number;
 }
-export interface СonfirmingAnswer {
+export interface ConfirmatoryAnswer {
   message: string
 }
