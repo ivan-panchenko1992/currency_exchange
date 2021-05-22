@@ -84,7 +84,9 @@ const App: React.FC = () => {
         />
       )}
       {page === 'success' && (
-        <SuccessPage />
+        <SuccessPage
+          setPage={setPage}
+        />
       )}
     </div>
   );

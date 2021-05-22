@@ -3,7 +3,11 @@ import React from 'react';
 import './SuccessPage.scss';
 import Vector from '../../images/Vector.svg';
 
-export const SuccessPage: React.FC = () => (
+interface Props {
+  setPage: any,
+}
+
+export const SuccessPage: React.FC<Props> = ({ setPage }) => (
   <form className="success-page">
     <img alt="success" src={Vector} />
     <h1 className="success-page__heading">Success!</h1>
@@ -15,6 +19,7 @@ export const SuccessPage: React.FC = () => (
     <button
       type="button"
       className="success-page__button"
+      onClick={() => setPage('form')}
     >
       Home
     </button>

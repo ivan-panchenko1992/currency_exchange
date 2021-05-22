@@ -1,12 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
-import React from 'react';
+import React, { useState } from 'react';
 import './ExchangeForm.scss';
 import { PayMethod } from '../../interfaces';
 
 interface Props {
   invoisePayMethod: PayMethod[],
   setPage: any,
-  // onExchange: any,
   setInvoicePayMethodId: any,
   handleChangeValue: any,
   setWithdrawPayMethodId: any,
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export const ExchangeForm: React.FC<Props> = ({
-  // onExchange,
   setPage,
   setInvoicePayMethodId,
   handleChangeValue,
@@ -26,14 +24,20 @@ export const ExchangeForm: React.FC<Props> = ({
   invoisePayMethod,
   withdrawPayMethod,
 }) => {
-  const exchangeHandler = (event: any) => {
+  const [isNotAdd, setNotAdd] = useState(false);
+
+  const exchangeSubmit = (event: any) => {
     event.preventDefault();
-    setPage('conferm');
+    if (invoiseValue !== '' && withdrawValue !== '') {
+      setPage('conferm');
+      setNotAdd(false);
+    }
+    setNotAdd(true);
   };
   return (
     <form
       className="container"
-      onSubmit={(event) => exchangeHandler(event)}
+      onSubmit={(event) => exchangeSubmit(event)}
     >
       <div className="card-container">
         <div className="card">
@@ -41,8 +45,9 @@ export const ExchangeForm: React.FC<Props> = ({
           <select
             name="select"
             className="card__select"
-            onChange={(event) => (
-              setInvoicePayMethodId(+event.target.value))}
+            onChange={(event) => {
+              setInvoicePayMethodId(+event.target.value);
+            }}
           >
             {invoisePayMethod.map((method) => (
               <option
@@ -57,7 +62,6 @@ export const ExchangeForm: React.FC<Props> = ({
             type="number"
             name="invoice"
             value={invoiseValue}
-            required
             placeholder="write your numbers"
             className="card__input"
             onChange={(event) => handleChangeValue(event)}
@@ -82,7 +86,6 @@ export const ExchangeForm: React.FC<Props> = ({
           <input
             type="number"
             name="withdraw"
-            required
             value={withdrawValue}
             placeholder="write your numbers"
             className="card__input"
@@ -90,11 +93,12 @@ export const ExchangeForm: React.FC<Props> = ({
           />
         </div>
       </div>
+      {isNotAdd
+        && <p>❌You forgot to enter quantity of currencies❌</p>}
       <div className="button-container">
         <button
           className="button-container__button"
           type="submit"
-          // onClick={() => setIsVisibleCoferm('conferm')}
         >
           Exchange
         </button>

@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
-import React from 'react';
+import React, { useState } from 'react';
 import './ConfirmationPage.scss';
+import classNames from 'classnames';
 import { PayMethod, ConfirmatoryAnswer } from '../../interfaces';
 import { getSuccess } from '../../Api/PayMethod';
 
@@ -26,16 +27,20 @@ export const ConfirmationPage: React.FC<Props> = ({
   payMethod,
 
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const invoicePayMethodName = invoisePayMethod
     .find((method) => method.id === invoicePayMethodId);
   const withdrawPayMethodName = withdrawPayMethod
     .find((method) => method.id === withdrawPayMethodId);
 
   const confirmation = () => {
+    setIsLoading(true);
     if (payMethod === 'invoice') {
       getSuccess(invoiseValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
         .then((result: ConfirmatoryAnswer) => {
           if (result.message === 'Success') {
+            setIsLoading(false);
             setPage('success');
           }
         });
@@ -44,6 +49,7 @@ export const ConfirmationPage: React.FC<Props> = ({
       getSuccess(withdrawValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
         .then((result: ConfirmatoryAnswer) => {
           if (result.message === 'Success') {
+            setIsLoading(false);
             setPage('success');
           }
         });
@@ -51,7 +57,10 @@ export const ConfirmationPage: React.FC<Props> = ({
   };
 
   return (
-    <div className="card-confirmation">
+    <div className={classNames('card-confirmation', {
+      'card-confirmation-loading': isLoading,
+    })}
+    >
       <h1 className="card-confirmation__heading">Details</h1>
       <div className="card-confirmation__invoise">
         <p className="card-confirmation__invoise-sell">Sell:</p>
@@ -83,10 +92,13 @@ export const ConfirmationPage: React.FC<Props> = ({
         </button>
         <button
           type="button"
+          disabled={isLoading}
           className="card-confirmation__button-confirme"
           onClick={() => confirmation()}
         >
-          Confirme
+          {isLoading
+            ? 'Loading...'
+            : 'Confirme'}
         </button>
       </div>
     </div>

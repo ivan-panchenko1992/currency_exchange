@@ -1,9 +1,13 @@
+.card-confirmation-loading {
+  opacity: 0.4;
+}
 .card-confirmation {
   display: flex;
   flex-direction: column;
   padding: 28px 32px;
   box-shadow: 0px 8px 28px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+  
 
   &__heading {
     margin-top: 0;
