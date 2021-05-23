@@ -5,70 +5,70 @@
   display: flex;
   flex-direction: column;
   padding: 28px 32px;
-  box-shadow: 0px 8px 28px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
+
+  box-shadow: $card-box-shadow;
+  border-radius: $card-border-radius;
   
 
   &__heading {
     margin-top: 0;
     margin-bottom: 36px;
 
-    font-size: 48px;
-    font-weight: 700;
+    font-size: $heading-font-size-main;
+    font-weight: $heading-font-weight;
     line-height: 56px;
   }
 
   &__invoise {
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
+    @include flex-space-bw;
+
+    font-size: $main-font-size;
     line-height: 18.75px;
   }
 
   &__withdraw {
-    display: flex;
-    justify-content: space-between;
+    @include flex-space-bw;
+
     margin-bottom: 52px;
-    font-size: 16px;
+    font-size: $main-font-size;
     line-height: 18.75px;
   }
 
   &__button {
-    display: flex;
-    justify-content: space-around;
+    @include flex-space-ar;
 
     &-cancel {
-      width: 125px;
-      height: 48px;
+      width: $button-width;
+      height: $button-height;
       margin-right: 24px;
       margin-left: 60px;
 
       line-height: 16px;
 
       
-      border-radius: 4px;
-      border: 1px solid #58B4AE;
+      border-radius: $button-border-radius;
+      border: $border-in-white-button;
 
       &:hover {
-        background-color: #58B4AE;
-        color: #FFFFFF;
+        background-color: $button-main-color;
+        color: $button-secondary-color;
       }
     }
 
     &-confirme {
-      width: 125px;
-      height: 48px;
+      width: $button-width;
+      height: $button-height;
       margin-right: 60px;
 
-      color: #FFFFFF;
+      color: $button-secondary-color;
       line-height: 16px;
 
-      background-color: #58B4AE;
-      border-radius: 4px;
+      background-color: $button-main-color;
+      border-radius: $button-border-radius;
       &:hover {
-        background-color: #FFFFFF;
-        color: #58B4AE;
-        border: 1px solid #58B4AE;
+        background-color: $button-secondary-color;
+        color: $button-main-color;
+        border: $border-in-white-button;
       }
     }
   }

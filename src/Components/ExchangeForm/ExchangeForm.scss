@@ -1,16 +1,12 @@
 .form-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  @include centered-column;
 
-  box-shadow: 0px 8px 28px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
+  box-shadow: $card-box-shadow;
+  border-radius: $card-border-radius;
 }
 
 .card-container {
-  display: flex;
-  justify-content: space-around;
+  @include flex-space-ar;
 }
 
 .card-exchange {
@@ -18,7 +14,6 @@
   flex-direction: column;
   margin-left: 32px;
   margin-right: 32px;
-  position: relative;
 
   &:last-child {
     margin-left: 0;
@@ -27,8 +22,8 @@
   &__heading {
     margin: 28px 0 48px;
 
-    font-weight: 700;
-    font-size: 48px;
+    font-weight: $heading-font-weight;
+    font-size: $heading-font-size-main;
   }
 
   &__select {
@@ -38,14 +33,14 @@
     padding-left: 20px;
     padding-right: 20px;
     
-    font-weight: 500;
+    font-weight: $secondary-font-weight;
     font-size: 18px;
     line-height: 21px;
 
     border-radius: 4px;
     border: 1px solid #CBCBCB;
     &:focus {
-      border: 1px solid #58B4AE;
+      border: $border-in-white-button;
     }
   }
 
@@ -56,11 +51,11 @@
     padding-left: 20px;
     padding-right: 20px;
     
-    font-size: 16px;
+    font-size: $main-font-size;
     line-height: 19px;
 
     border: 1px solid #CBCBCB;
-    border-radius: 8px;
+    border-radius: $card-border-radius;
   }
 }
 
@@ -77,22 +72,23 @@
   &__button {
     margin-top: 36px;
     padding: 16px 32px;
-    width: 125px;
-    height: 48px;
+    width: $button-width;
+    height: $button-height;
     
     
-    font-weight: 700;
+    font-weight: $heading-font-weight;
     font-size: 14px;
     text-align: center;
     color: #FBFCFF;
     line-height: 16px;
     
 
-    background-color: #58B4AE;
+    background-color: $button-main-color;
     border-radius: 4px;
 
     &:hover {
-      background-color: #9BD2CE;
+      color: $button-main-color;
+      background-color: $button-secondary-color;
     }
   }
 }

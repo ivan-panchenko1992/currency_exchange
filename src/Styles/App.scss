@@ -5,9 +5,9 @@
   width: 100vw;
   height: 100vh;
 
-  color: #3A3A3A;
+  color: $main-color-text;
 
-  background-color: #FBFCFF;
+  background-color: $main-back-color;
   &-loading {
     opacity: 0.4;
   }
