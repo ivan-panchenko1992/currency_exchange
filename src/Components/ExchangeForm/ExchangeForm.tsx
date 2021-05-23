@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import React, { useState } from 'react';
-import './ExchangeForm.scss';
+// import './ExchangeForm.scss';
 import { PayMethod } from '../../interfaces';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   invoiceValue: string,
   withdrawValue: string,
   withdrawPayMethod: PayMethod[],
+  isLoading:boolean,
 }
 
 export const ExchangeForm: React.FC<Props> = ({
@@ -23,6 +24,7 @@ export const ExchangeForm: React.FC<Props> = ({
   withdrawValue,
   invoicePayMethod,
   withdrawPayMethod,
+  isLoading,
 }) => {
   const [isNotAdd, setIsNotAdd] = useState(false);
 
@@ -38,6 +40,7 @@ export const ExchangeForm: React.FC<Props> = ({
     <form
       className="form-container"
       onSubmit={(event) => exchangeSubmit(event)}
+      noValidate
     >
       <div className="card-container">
         <div className="card-exchange">
@@ -61,6 +64,7 @@ export const ExchangeForm: React.FC<Props> = ({
           <input
             type="number"
             name="invoice"
+            min="0.01"
             value={invoiceValue}
             placeholder="write your numbers"
             className="card-exchange__input"
@@ -86,6 +90,7 @@ export const ExchangeForm: React.FC<Props> = ({
           <input
             type="number"
             name="withdraw"
+            min="0.01"
             value={withdrawValue}
             placeholder="write your numbers"
             className="card-exchange__input"
@@ -99,6 +104,7 @@ export const ExchangeForm: React.FC<Props> = ({
         <button
           className="button-container__button"
           type="submit"
+          disabled={isLoading}
         >
           Exchange
         </button>

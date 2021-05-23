@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
-import React, { useState, useEffect } from 'react';
-import './App.scss';
+import React, { useState, useEffect, useCallback } from 'react';
+// import './App.scss';
 // import { debounce } from 'ts-debounce';
 
 import classNames from 'classnames';
@@ -34,6 +34,7 @@ const App: React.FC = () => {
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    setIsLoading(true);
     if (name === 'invoice') {
       setInvoiceValue(value);
       if (value) {
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           .then((result: Amount) => {
             setWithdrawValue(String(result.amount));
             setPayMethod('invoice');
+            setIsLoading(false);
           });
       } else {
         setWithdrawValue('');
@@ -55,12 +57,21 @@ const App: React.FC = () => {
           .then((result: Amount) => {
             setInvoiceValue(String(result.amount));
             setPayMethod('withdraw');
+            setIsLoading(false);
           });
       } else {
         setInvoiceValue('');
       }
     }
   };
+
+  const reset = useCallback(() => {
+    setInvoiceValue('');
+    setWithdrawValue('');
+    setInvoicePayMethodId(invoicePayMethod[0].id);
+    setWithdrawPayMethodId(withdrawPayMethod[0].id);
+    setPage('form');
+  }, [invoicePayMethodId, withdrawPayMethodId]);
 
   return (
     <div className={classNames('app', {
@@ -77,6 +88,7 @@ const App: React.FC = () => {
           setWithdrawPayMethodId={setWithdrawPayMethodId}
           withdrawValue={withdrawValue}
           invoiceValue={invoiceValue}
+          isLoading={isLoading}
         />
       )}
       {page === 'conferm' && (
@@ -89,13 +101,12 @@ const App: React.FC = () => {
           invoicePayMethodId={invoicePayMethodId}
           withdrawPayMethodId={withdrawPayMethodId}
           setPage={setPage}
+          reset={reset}
         />
       )}
       {page === 'success' && (
         <SuccessPage
-          setPage={setPage}
-          setInvoiceValue={setInvoiceValue}
-          setWithdrawValue={setWithdrawValue}
+          reset={reset}
         />
       )}
     </div>

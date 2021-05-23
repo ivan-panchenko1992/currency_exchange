@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import React, { useState } from 'react';
-import './ConfirmationPage.scss';
+// import './ConfirmationPage.scss';
 import classNames from 'classnames';
 import { PayMethod, ConfirmatoryAnswer } from '../../interfaces';
 import { getSuccess } from '../../Api/PayMethod';
@@ -14,6 +14,7 @@ interface Props {
   invoicePayMethodId: number,
   withdrawPayMethodId: number,
   setPage: React.Dispatch<React.SetStateAction<string>>,
+  reset: any,
 }
 
 export const ConfirmationPage: React.FC<Props> = ({
@@ -25,6 +26,7 @@ export const ConfirmationPage: React.FC<Props> = ({
   withdrawPayMethodId,
   setPage,
   payMethod,
+  reset,
 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +89,7 @@ export const ConfirmationPage: React.FC<Props> = ({
           type="button"
           disabled={isLoading}
           className="card-confirmation__button-cancel"
-          onClick={() => setPage('form')}
+          onClick={() => reset()}
         >
           Cancel
         </button>
