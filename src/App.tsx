@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect, useCallback } from 'react';
 // import './App.scss';
-// import { debounce } from 'ts-debounce';
+import { debounce } from 'ts-debounce';
 
 import classNames from 'classnames';
 import { getResultValue, getPayMethods } from './Api/PayMethod';
-import { Amount, ResultPaymethods, PayMethod } from './interfaces';
+import { ResultPaymethods, PayMethod } from './interfaces';
 import { SuccessPage } from './Components/SuccessPage/SuccessPage';
 import { ConfirmationPage } from './Components/СonfirmationPage/ConfirmationPage';
 import { ExchangeForm } from './Components/ExchangeForm/ExchangeForm';
@@ -32,36 +32,40 @@ const App: React.FC = () => {
     });
   }, []);
 
+  const debQuerry = useCallback(debounce((
+    value: string,
+    invoiceId: number,
+    method: string,
+    withdrawId: number,
+  ) => (getResultValue(invoiceId, method, withdrawId, value)), 500), []);
+
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setIsLoading(true);
+
     if (name === 'invoice') {
       setInvoiceValue(value);
-      if (value) {
-        getResultValue(invoicePayMethodId, 'invoice', withdrawPayMethodId, value)
-          .then((result: Amount) => {
-            setWithdrawValue(String(result.amount));
-            setPayMethod('invoice');
-            setIsLoading(false);
-          });
-      } else {
+      if (!value) {
         setWithdrawValue('');
+        return;
       }
-      return;
+      debQuerry(value, invoicePayMethodId, 'invoice', withdrawPayMethodId)
+        .then((result: any) => {
+          console.log(result);
+          setWithdrawValue(String(result.amount));
+          setPayMethod('invoice');
+        });
     }
-
     if (name === 'withdraw') {
       setWithdrawValue(value);
-      if (value) {
-        getResultValue(invoicePayMethodId, 'withdraw', withdrawPayMethodId, value)
-          .then((result: Amount) => {
-            setInvoiceValue(String(result.amount));
-            setPayMethod('withdraw');
-            setIsLoading(false);
-          });
-      } else {
-        setInvoiceValue('');
-      }
+
+      // if (!value) {
+      //   return;
+      // }
+      debQuerry(value, invoicePayMethodId, 'withdraw', withdrawPayMethodId)
+        .then((result: any) => {
+          setInvoiceValue(String(result.amount));
+          setPayMethod('withdraw');
+        });
     }
   };
 
