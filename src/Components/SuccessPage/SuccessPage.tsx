@@ -1,6 +1,5 @@
-// eslint-disable-next-line import/no-unresolved
 import React from 'react';
-// import './SuccessPage.scss';
+
 import Vector from '../../images/Vector.svg';
 
 interface Props {

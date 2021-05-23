@@ -71,7 +71,6 @@
   margin-bottom: 28px;
   &__button {
     margin-top: 36px;
-    padding: 16px 32px;
     width: $button-width;
     height: $button-height;
     
@@ -89,6 +88,7 @@
     &:hover {
       color: $button-main-color;
       background-color: $button-secondary-color;
+      border: $border-in-white-button;
     }
   }
 }

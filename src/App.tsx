@@ -1,11 +1,10 @@
-// eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect, useCallback } from 'react';
-// import './App.scss';
+
 import { debounce } from 'ts-debounce';
 
 import classNames from 'classnames';
 import { getResultValue, getPayMethods } from './Api/PayMethod';
-import { ResultPaymethods, PayMethod } from './interfaces';
+import { ResultPaymethods, PayMethod, Amount } from './interfaces';
 import { SuccessPage } from './Components/SuccessPage/SuccessPage';
 import { ConfirmationPage } from './Components/СonfirmationPage/ConfirmationPage';
 import { ExchangeForm } from './Components/ExchangeForm/ExchangeForm';
@@ -32,41 +31,41 @@ const App: React.FC = () => {
     });
   }, []);
 
-  const debQuerry = useCallback(debounce((
+  const query = useCallback(debounce((
     value: string,
     invoiceId: number,
     method: string,
     withdrawId: number,
-  ) => (getResultValue(invoiceId, method, withdrawId, value)), 500), []);
+  ) => {
+    if (!value) {
+      if (method === 'invoice') setWithdrawValue('');
+      if (method === 'withdraw') setInvoiceValue('');
+
+      return null;
+    }
+    setIsLoading(true);
+    return getResultValue(invoiceId, method, withdrawId, value).then((result: Amount) => {
+      if (method === 'invoice') {
+        setWithdrawValue(String(result.amount));
+        setPayMethod('invoice');
+        setIsLoading(false);
+      }
+
+      if (method === 'withdraw') {
+        setInvoiceValue(String(result.amount));
+        setPayMethod('withdraw');
+        setIsLoading(false);
+      }
+    });
+  }, 500), []);
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
-    if (name === 'invoice') {
-      setInvoiceValue(value);
-      if (!value) {
-        setWithdrawValue('');
-        return;
-      }
-      debQuerry(value, invoicePayMethodId, 'invoice', withdrawPayMethodId)
-        .then((result: any) => {
-          console.log(result);
-          setWithdrawValue(String(result.amount));
-          setPayMethod('invoice');
-        });
-    }
-    if (name === 'withdraw') {
-      setWithdrawValue(value);
+    if (name === 'invoice') setInvoiceValue(value);
+    if (name === 'withdraw') setWithdrawValue(value);
 
-      // if (!value) {
-      //   return;
-      // }
-      debQuerry(value, invoicePayMethodId, 'withdraw', withdrawPayMethodId)
-        .then((result: any) => {
-          setInvoiceValue(String(result.amount));
-          setPayMethod('withdraw');
-        });
-    }
+    query(value, invoicePayMethodId, name, withdrawPayMethodId);
   };
 
   const reset = useCallback(() => {

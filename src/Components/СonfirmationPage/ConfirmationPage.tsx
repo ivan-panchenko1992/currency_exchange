@@ -1,6 +1,5 @@
-// eslint-disable-next-line import/no-unresolved
 import React, { useState } from 'react';
-// import './ConfirmationPage.scss';
+
 import classNames from 'classnames';
 import { PayMethod, ConfirmatoryAnswer } from '../../interfaces';
 import { getSuccess } from '../../Api/PayMethod';
