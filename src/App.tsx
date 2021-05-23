@@ -1,7 +1,10 @@
 // eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect } from 'react';
 import './App.scss';
-import { getValueInvoise, getPayMethods } from './Api/PayMethod';
+// import { debounce } from 'ts-debounce';
+
+import classNames from 'classnames';
+import { getResultValue, getPayMethods } from './Api/PayMethod';
 import { Amount, ResultPaymethods, PayMethod } from './interfaces';
 import { SuccessPage } from './Components/SuccessPage/SuccessPage';
 import { ConfirmationPage } from './Components/СonfirmationPage/ConfirmationPage';
@@ -11,28 +14,30 @@ const App: React.FC = () => {
   const [invoicePayMethodId, setInvoicePayMethodId] = useState<number>(0);
   const [withdrawPayMethodId, setWithdrawPayMethodId] = useState<number>(0);
   const [withdrawValue, setWithdrawValue] = useState('');
-  const [invoiseValue, setInvoiseValue] = useState('');
+  const [invoiceValue, setInvoiceValue] = useState('');
   const [payMethod, setPayMethod] = useState<string>('');
-  const [invoisePayMethod, setInvosePayMethod] = useState<PayMethod[]>([]);
+  const [invoicePayMethod, setInvocePayMethod] = useState<PayMethod[]>([]);
   const [withdrawPayMethod, setWithdrawPayMethod] = useState<PayMethod[]>([]);
   const [page, setPage] = useState('form');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     getPayMethods().then((result: ResultPaymethods) => {
-      setInvosePayMethod(result.invoice);
+      setInvocePayMethod(result.invoice);
       setInvoicePayMethodId(result.invoice[0].id);
       setWithdrawPayMethod(result.withdraw);
       setWithdrawPayMethodId(result.withdraw[0].id);
+      setIsLoading(false);
     });
   }, []);
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
     if (name === 'invoice') {
-      setInvoiseValue(value);
+      setInvoiceValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'invoice', withdrawPayMethodId, value)
+        getResultValue(invoicePayMethodId, 'invoice', withdrawPayMethodId, value)
           .then((result: Amount) => {
             setWithdrawValue(String(result.amount));
             setPayMethod('invoice');
@@ -46,37 +51,40 @@ const App: React.FC = () => {
     if (name === 'withdraw') {
       setWithdrawValue(value);
       if (value) {
-        getValueInvoise(invoicePayMethodId, 'withdraw', withdrawPayMethodId, value)
+        getResultValue(invoicePayMethodId, 'withdraw', withdrawPayMethodId, value)
           .then((result: Amount) => {
-            setInvoiseValue(String(result.amount));
+            setInvoiceValue(String(result.amount));
             setPayMethod('withdraw');
           });
       } else {
-        setInvoiseValue('');
+        setInvoiceValue('');
       }
     }
   };
 
   return (
-    <div className="app">
+    <div className={classNames('app', {
+      'app-loading': isLoading,
+    })}
+    >
       {page === 'form' && (
         <ExchangeForm
-          invoisePayMethod={invoisePayMethod}
+          invoicePayMethod={invoicePayMethod}
           withdrawPayMethod={withdrawPayMethod}
           setPage={setPage}
           setInvoicePayMethodId={setInvoicePayMethodId}
           handleChangeValue={handleChangeValue}
           setWithdrawPayMethodId={setWithdrawPayMethodId}
           withdrawValue={withdrawValue}
-          invoiseValue={invoiseValue}
+          invoiceValue={invoiceValue}
         />
       )}
       {page === 'conferm' && (
         <ConfirmationPage
           withdrawValue={withdrawValue}
           payMethod={payMethod}
-          invoiseValue={invoiseValue}
-          invoisePayMethod={invoisePayMethod}
+          invoiceValue={invoiceValue}
+          invoicePayMethod={invoicePayMethod}
           withdrawPayMethod={withdrawPayMethod}
           invoicePayMethodId={invoicePayMethodId}
           withdrawPayMethodId={withdrawPayMethodId}
@@ -86,6 +94,8 @@ const App: React.FC = () => {
       {page === 'success' && (
         <SuccessPage
           setPage={setPage}
+          setInvoiceValue={setInvoiceValue}
+          setWithdrawValue={setWithdrawValue}
         />
       )}
     </div>

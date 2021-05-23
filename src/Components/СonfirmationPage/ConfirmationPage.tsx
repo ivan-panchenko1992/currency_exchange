@@ -7,19 +7,19 @@ import { getSuccess } from '../../Api/PayMethod';
 
 interface Props {
   payMethod: string,
-  invoiseValue: string,
+  invoiceValue: string,
   withdrawValue: string,
-  invoisePayMethod: PayMethod[],
+  invoicePayMethod: PayMethod[],
   withdrawPayMethod: PayMethod[],
   invoicePayMethodId: number,
   withdrawPayMethodId: number,
-  setPage: any,
+  setPage: React.Dispatch<React.SetStateAction<string>>,
 }
 
 export const ConfirmationPage: React.FC<Props> = ({
-  invoiseValue,
+  invoiceValue,
   withdrawValue,
-  invoisePayMethod,
+  invoicePayMethod,
   withdrawPayMethod,
   invoicePayMethodId,
   withdrawPayMethodId,
@@ -29,7 +29,7 @@ export const ConfirmationPage: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const invoicePayMethodName = invoisePayMethod
+  const invoicePayMethodName = invoicePayMethod
     .find((method) => method.id === invoicePayMethodId);
   const withdrawPayMethodName = withdrawPayMethod
     .find((method) => method.id === withdrawPayMethodId);
@@ -37,7 +37,7 @@ export const ConfirmationPage: React.FC<Props> = ({
   const confirmation = () => {
     setIsLoading(true);
     if (payMethod === 'invoice') {
-      getSuccess(invoiseValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
+      getSuccess(invoiceValue, payMethod, invoicePayMethodId, withdrawPayMethodId)
         .then((result: ConfirmatoryAnswer) => {
           if (result.message === 'Success') {
             setIsLoading(false);
@@ -67,7 +67,7 @@ export const ConfirmationPage: React.FC<Props> = ({
         <p
           className="card-confirmation__invoise-quontity"
         >
-          {invoiseValue}
+          {invoiceValue}
           {' '}
           {invoicePayMethodName?.name}
         </p>
@@ -85,6 +85,7 @@ export const ConfirmationPage: React.FC<Props> = ({
       <div className="card-confirmation__button">
         <button
           type="button"
+          disabled={isLoading}
           className="card-confirmation__button-cancel"
           onClick={() => setPage('form')}
         >
