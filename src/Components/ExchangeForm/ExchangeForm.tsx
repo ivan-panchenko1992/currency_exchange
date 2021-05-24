@@ -29,7 +29,7 @@ export const ExchangeForm: React.FC<Props> = ({
 
   const exchangeSubmit = (event: any) => {
     event.preventDefault();
-    if (invoiceValue !== '' && withdrawValue !== '') {
+    if (invoiceValue && withdrawValue) {
       setPage('conferm');
       setIsNotAdd(false);
     }
