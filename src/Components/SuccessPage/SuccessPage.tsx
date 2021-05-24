@@ -3,7 +3,7 @@ import React from 'react';
 import Vector from '../../images/Vector.svg';
 
 interface Props {
-  reset: any;
+  reset: () => void;
 }
 
 export const SuccessPage: React.FC<Props> = React.memo(({ reset }) => (

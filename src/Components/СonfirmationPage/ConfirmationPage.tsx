@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames';
 import { PayMethod, ConfirmatoryAnswer } from '../../interfaces';
-import { getSuccess } from '../../Api/PayMethod';
+import { getSuccess } from '../../Api/queryRequests';
 
 interface Props {
   payMethod: string,
   invoiceValue: string,
   withdrawValue: string,
-  invoicePayMethod: PayMethod[],
-  withdrawPayMethod: PayMethod[],
+  invoicePayMethods: PayMethod[],
+  withdrawPayMethods: PayMethod[],
   invoicePayMethodId: number,
   withdrawPayMethodId: number,
   setPage: React.Dispatch<React.SetStateAction<string>>,
-  reset: any,
+  reset: () => void,
 }
 
 export const ConfirmationPage: React.FC<Props> = ({
   invoiceValue,
   withdrawValue,
-  invoicePayMethod,
-  withdrawPayMethod,
+  invoicePayMethods,
+  withdrawPayMethods,
   invoicePayMethodId,
   withdrawPayMethodId,
   setPage,
@@ -30,9 +30,9 @@ export const ConfirmationPage: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const invoicePayMethodName = invoicePayMethod
+  const invoicePayMethodName = invoicePayMethods
     .find((method) => method.id === invoicePayMethodId);
-  const withdrawPayMethodName = withdrawPayMethod
+  const withdrawPayMethodName = withdrawPayMethods
     .find((method) => method.id === withdrawPayMethodId);
 
   const confirmation = () => {

@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { PayMethod } from '../../interfaces';
 
 interface Props {
-  invoicePayMethod: PayMethod[],
+  invoicePayMethods: PayMethod[],
   setPage: React.Dispatch<React.SetStateAction<string>>,
   setInvoicePayMethodId: React.Dispatch<React.SetStateAction<number>>,
   handleChangeValue: any,
   setWithdrawPayMethodId: React.Dispatch<React.SetStateAction<number>>,
   invoiceValue: string,
   withdrawValue: string,
-  withdrawPayMethod: PayMethod[],
+  withdrawPayMethods: PayMethod[],
   isLoading:boolean,
 }
 
@@ -21,8 +21,8 @@ export const ExchangeForm: React.FC<Props> = ({
   setWithdrawPayMethodId,
   invoiceValue,
   withdrawValue,
-  invoicePayMethod,
-  withdrawPayMethod,
+  invoicePayMethods,
+  withdrawPayMethods,
   isLoading,
 }) => {
   const [isNotAdd, setIsNotAdd] = useState(false);
@@ -51,7 +51,7 @@ export const ExchangeForm: React.FC<Props> = ({
               setInvoicePayMethodId(+event.target.value);
             }}
           >
-            {invoicePayMethod.map((method) => (
+            {invoicePayMethods.map((method) => (
               <option
                 value={method.id}
                 key={method.id}
@@ -77,7 +77,7 @@ export const ExchangeForm: React.FC<Props> = ({
             className="card-exchange__select"
             onChange={(event) => setWithdrawPayMethodId(+event.target.value)}
           >
-            {withdrawPayMethod.map((method) => (
+            {withdrawPayMethods.map((method) => (
               <option
                 value={method.id}
                 key={method.id}

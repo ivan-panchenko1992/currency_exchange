@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { debounce } from 'ts-debounce';
 
 import classNames from 'classnames';
-import { getResultValue, getPayMethods } from './Api/PayMethod';
+import { getResultValue, getPayMethods } from './Api/queryRequests';
 import { ResultPaymethods, PayMethod, Amount } from './interfaces';
 import { SuccessPage } from './Components/SuccessPage/SuccessPage';
 import { ConfirmationPage } from './Components/СonfirmationPage/ConfirmationPage';
@@ -15,8 +15,8 @@ const App: React.FC = () => {
   const [withdrawValue, setWithdrawValue] = useState('');
   const [invoiceValue, setInvoiceValue] = useState('');
   const [payMethod, setPayMethod] = useState<string>('');
-  const [invoicePayMethod, setInvocePayMethod] = useState<PayMethod[]>([]);
-  const [withdrawPayMethod, setWithdrawPayMethod] = useState<PayMethod[]>([]);
+  const [invoicePayMethods, setInvocePayMethod] = useState<PayMethod[]>([]);
+  const [withdrawPayMethods, setWithdrawPayMethod] = useState<PayMethod[]>([]);
   const [page, setPage] = useState('form');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -71,8 +71,8 @@ const App: React.FC = () => {
   const reset = useCallback(() => {
     setInvoiceValue('');
     setWithdrawValue('');
-    setInvoicePayMethodId(invoicePayMethod[0].id);
-    setWithdrawPayMethodId(withdrawPayMethod[0].id);
+    setInvoicePayMethodId(invoicePayMethods[0].id);
+    setWithdrawPayMethodId(withdrawPayMethods[0].id);
     setPage('form');
   }, [invoicePayMethodId, withdrawPayMethodId]);
 
@@ -83,8 +83,8 @@ const App: React.FC = () => {
     >
       {page === 'form' && (
         <ExchangeForm
-          invoicePayMethod={invoicePayMethod}
-          withdrawPayMethod={withdrawPayMethod}
+          invoicePayMethods={invoicePayMethods}
+          withdrawPayMethods={withdrawPayMethods}
           setPage={setPage}
           setInvoicePayMethodId={setInvoicePayMethodId}
           handleChangeValue={handleChangeValue}
@@ -99,8 +99,8 @@ const App: React.FC = () => {
           withdrawValue={withdrawValue}
           payMethod={payMethod}
           invoiceValue={invoiceValue}
-          invoicePayMethod={invoicePayMethod}
-          withdrawPayMethod={withdrawPayMethod}
+          invoicePayMethods={invoicePayMethods}
+          withdrawPayMethods={withdrawPayMethods}
           invoicePayMethodId={invoicePayMethodId}
           withdrawPayMethodId={withdrawPayMethodId}
           setPage={setPage}
